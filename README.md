@@ -2,6 +2,7 @@
 ### 这个是一个react全家桶的整体学习
 * 核心是对react进行练习，因此前后端项目搭建都采用比较快速搭建方式
 ***
+>第一部分 搭建基本app
 1. 服务器搭建 
     - 主要采用[json-server](https://github.com/typicode/json-server.git)快速搭建后端服务器，以提供api接口支持 
     - 安装：`npm i json-server -g` 
@@ -25,3 +26,67 @@
         "server": "cd server && json-server db.json -w -p 3000",
         "dev": "roadhog server"
      }`
+***
+>第二部分 router路由搭建，form表单创建，form表单验证及高阶函数
+1. router路由搭建
+    - 创建/src/pages 创建/src/pages/Home.js 创建/src/pages/UserAdd.js
+    - 写入基本代码
+    * index.js
+    ```javascript
+    import React from 'react';
+    import ReactDOM from 'react-dom';
+    import { Router, Route, hashHistory } from 'react-router'
+    //文件引入
+    import HomePage from './pages/Home'
+    import UserAddPage from './pages/UserAdd'
+
+    ReactDOM.render((
+    <Router history={hashHistory}>
+        <Route path="/" component={HomePage} />
+        <Route path="/user/add" component={UserAddPage} />
+    </Router>
+    ), document.getElementById('app'));
+    ```
+    * Home.js
+    ```javascript
+    import React, {Component, PropTypes } from 'react'
+    import { Link } from 'react-router'
+
+    class Home extends Component {
+        render() {
+            return (
+                <div>
+                    <header>
+                        <h1>this is Home</h1>
+                    </header>
+                    <main>
+                        <Link to="user/add">添加用户</Link>
+                    </main>
+                </div>
+            )
+        }
+    }
+
+    export default Home
+    ```
+    * UserAdd.js
+    ```javascript
+    import React, {Component, PropTypes } from 'react'
+
+    class UserAdd extends Component {
+        render() {
+            return (
+                <div>
+                    <header>
+                        <h1>this is UserAdd</h1>
+                    </header>
+                    <main>
+                    </main>
+                </div>
+            )
+        }
+    }
+
+    export default UserAdd
+    ```
+    
