@@ -11,7 +11,7 @@ class Home extends Component {
         return (
             <div>
                 <header>
-                    <h1>this is Home</h1>
+                    <h1>this is Home </h1>
                 </header>
                 <main>
                     <Link to="user/add">添加用户</Link>

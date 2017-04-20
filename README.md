@@ -31,65 +31,14 @@
 1. router路由搭建
     - 创建/src/pages 创建/src/pages/Home.js 创建/src/pages/UserAdd.js
     - 写入基本代码
-    * index.js
-    ```javascript
-    import React from 'react';
-    import ReactDOM from 'react-dom';
-    import { Router, Route, hashHistory } from 'react-router'
-    //文件引入
-    import HomePage from './pages/Home'
-    import UserAddPage from './pages/UserAdd'
+2. form表单验证
+    * 用户姓名不能超过5个字符串且不能为空字符串
+    * 用户年龄在1到120之间
+    * 用户必须选择性别
+    * 思路在用户onchange时进行验证传入参数`(fields,value)`,进行字段验证
+3. form高阶函数
+    - 充分利用react,数据驱动思想,form只提供给用户填写,显示内容作用。
+    - 至于form表单验证,form表单表单提交则交给专业组件来做,
+    - component只接受数据props,已经返回回调方法及参数 
 
-    ReactDOM.render((
-    <Router history={hashHistory}>
-        <Route path="/" component={HomePage} />
-        <Route path="/user/add" component={UserAddPage} />
-    </Router>
-    ), document.getElementById('app'));
-    ```
-    * Home.js
-    ```javascript
-    import React, {Component, PropTypes } from 'react'
-    import { Link } from 'react-router'
 
-    class Home extends Component {
-        render() {
-            return (
-                <div>
-                    <header>
-                        <h1>this is Home</h1>
-                    </header>
-                    <main>
-                        <Link to="user/add">添加用户</Link>
-                    </main>
-                </div>
-            )
-        }
-    }
-
-    export default Home
-    ```
-    * UserAdd.js
-    ```javascript
-    import React, {Component, PropTypes } from 'react'
-
-    class UserAdd extends Component {
-        render() {
-            return (
-                <div>
-                    <header>
-                        <h1>this is UserAdd</h1>
-                    </header>
-                    <main>
-                    </main>
-                </div>
-            )
-        }
-    }
-
-    export default UserAdd
-    ```
-    2. form表单验证
-        *用户姓名不能超过5个字符串且不能为空字符串
-        *用户年龄在1到120之间
-        *用户必须选择性别

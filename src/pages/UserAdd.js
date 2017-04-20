@@ -1,137 +1,119 @@
-import React, {Component, PropTypes } from 'react'
+import React from 'react';
+import FormItem from '../components/FormItem';
+import formProvider from '../utils/formProvider';
 
-class UserAdd extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            form: {
-                name:{
-                    valid: false,
-                    value: '',
-                    error: ''
-                },
-                age:{
-                    valid: false,
-                    value: '',
-                    error: ''
-                },
-                gender:{
-                    valid: false,
-                    value: '',
-                    error: ''
-                },
-            }
+class UserAdd extends React.Component {
+    handleSubmit (e) {
+        e.preventDefault();
+
+        const {form: {name, age, gender}, formValid} = this.props;
+        if (!formValid) {
+            alert('请填写正确的信息后重试');
+            return;
         }
-    }
-    handleChange(field, value, type="string") {
-        if(type === "number") {
-            value = +value
-        }
-        const { form } = this.state
-        const newFiledObj = {value, valid: true, error: ''}
-        switch(field) {
-            case 'name': 
-                if(value.split('').length >= 2) {
-                    newFiledObj.error = '最多输入四个字符串'
-                    newFiledObj.valid = false
-                } else if(value.split('').lenght === 0 || value == " ") {
-                    newFiledObj.error = '请输入用户名'
-                    newFiledObj.valid = false
-                }
-                break
-            case 'age' : 
-                if(value <= 0 || value >120) {
-                    newFiledObj.error = '请输入1~120之间的数字'
-                    newFiledObj.valid = false
-                }
-                break
-            case 'gender' : 
-                if(!value) {
-                    newFiledObj.error = '请填入性别'
-                    newFiledObj.valid = false
-                }
-                break
-            }
-        this.setState({
-            form: {
-                ...form,
-                [field]: newFiledObj
-            }
-        })
-    }
-    handleSubmit(e) {
-        e.preventDefault()
-        const { form:{name, age, gender} } = this.state
-        if(!name.valid || !age.valid || !gender.valid) {
-            alert('请填写正确信息')
-            return
-        }
-        fetch('http://localhost:3000/user',{
+
+        fetch('http://localhost:3000/user', {
             method: 'post',
-            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 name: name.value,
                 age: age.value,
                 gender: gender.value
-            })
-        }).then(res => res.json()).then(res => {
-            if(res.id) {
-                alert('添加成功')
-                this.setState({
-                    form: {
-                        name:{
-                            valid: false,
-                            value: '',
-                            error: ''
-                        },
-                        age:{
-                            valid: false,
-                            value: '',
-                            error: ''
-                        },
-                        gender:{
-                            valid: false,
-                            value: '',
-                            error: ''
-                        },
-                    }
-                })
-            }else {
-                alert('添加失败')
+            }),
+            headers: {
+                'Content-Type': 'application/json'
             }
-        }).catch(err => console.error(err))
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.id) {
+                    alert('添加用户成功');
+                } else {
+                    alert('添加失败');
+                }
+            })
+            .catch((err) => console.error(err));
     }
-    render() {
-        const { form:{name, age, gender} } = this.state
+    render () {
+        const {form: {name, age, gender}, onFormChange} = this.props;
         return (
             <div>
                 <header>
-                    <h1>this is UserAdd</h1>
+                    <h1>添加用户</h1>
                 </header>
+
                 <main>
-                    <form onSubmit={e => this.handleSubmit(e)}>
-                        <label>用户名：</label>
-                        <input type="text" value={name.value} onChange={e => this.handleChange('name',e.target.value.trim())}/>
-                        {!name.valid && <span>{name.error}</span>}
-                        <br/>
-                        <lable>年龄：</lable>
-                        <input type="number" value={age.value || ''} onChange={e => this.handleChange('age',e.target.value,'number')}/>
-                        {!age.valid && <span>{age.error}</span>}
-                        <br/>
-                        <label>性别：</label>
-                        <select value={gender.value} onChange={e => this.handleChange('gender',e.target.value)}>
-                            <option value="">选择您的性别</option>
-                            <option value="male">男</option>
-                            <option value="female">女</option>
-                        </select>
-                        {!gender.valid && <span>{gender.error}</span>}
+                    <form onSubmit={(e) => this.handleSubmit(e)}>
+                        <FormItem label="用户名：" valid={name.valid} error={name.error}>
+                            <input
+                                type="text"
+                                value={name.value}
+                                onChange={(e) => onFormChange('name', e.target.value)}
+                            />
+                        </FormItem>
+                        <FormItem label="年龄：" valid={age.valid} error={age.error}>
+                            <input
+                                type="number"
+                                value={age.value || ''}
+                                onChange={(e) => onFormChange('age', +e.target.value)}
+                            />
+                        </FormItem>
+                        <FormItem label="性别：" valid={gender.valid} error={gender.error}>
+                            <select
+                                value={gender.value}
+                                onChange={(e) => onFormChange('gender', e.target.value)}
+                            >
+                                <option value="">请选择</option>
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </FormItem>
                         <br/>
                         <input type="submit" value="提交"/>
                     </form>
                 </main>
             </div>
-        )
+        );
     }
 }
 
-export default UserAdd
+UserAdd = formProvider({
+    name: {
+        defaultValue: '',
+        rules: [
+            {
+                pattern: function (value) {
+                    return value.length > 0;
+                },
+                error: '请输入用户名'
+            },
+            {
+                pattern: /^.{1,4}$/,
+                error: '用户名最多4个字符'
+            }
+        ]
+    },
+    age: {
+        defaultValue: 0,
+        rules: [
+            {
+                pattern: function (value) {
+                    return value >= 1 && value <= 100;
+                },
+                error: '请输入1~100的年龄'
+            }
+        ]
+    },
+    gender: {
+        defaultValue: '',
+        rules: [
+            {
+                pattern: function (value) {
+                    return !!value;
+                },
+                error: '请选择性别'
+            }
+        ]
+    }
+})(UserAdd);
+
+export default UserAdd;
