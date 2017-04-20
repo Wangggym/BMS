@@ -15,6 +15,8 @@ class Home extends Component {
                 </header>
                 <main>
                     <Link to="user/add">添加用户</Link>
+                    <br/>
+                    <Link to="user/list">用户列表</Link>
                 </main>
             </div>
         )

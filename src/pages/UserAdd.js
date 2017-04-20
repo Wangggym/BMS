@@ -1,4 +1,5 @@
 import React from 'react';
+import { hashHistory } from 'react-router'
 import FormItem from '../components/FormItem';
 import formProvider from '../utils/formProvider';
 
@@ -27,6 +28,7 @@ class UserAdd extends React.Component {
             .then((res) => {
                 if (res.id) {
                     alert('添加用户成功');
+                    hashHistory.push('/user/list');
                 } else {
                     alert('添加失败');
                 }

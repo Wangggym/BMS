@@ -40,5 +40,36 @@
     - 充分利用react,数据驱动思想,form只提供给用户填写,显示内容作用。
     - 至于form表单验证,form表单表单提交则交给专业组件来做,
     - component只接受数据props,已经返回回调方法及参数 
-
+***
+>第三部分 
+1. 创建userList显示数据库数据
+    - 在componentWillMount或者componentDidMount时,发起数据请求。将请求来的数据放置在state中，如下：
+    ```javascript
+    ...
+    constructor(props) {
+        super(props)
+        this.state = {
+            userList: false
+        }
+    }
+    componentDidMount() {
+        fetch('http://localhost:3000/user')
+            .then(res => res.json())
+            .then(res => {
+                this.setState({
+                    userList: res
+                })
+            })
+    }
+    //数据map方法生成
+    ...
+    {userList.map((user,index) => {
+        return (
+            <tr key={index}>
+                <td>{user.name}</td>
+                ...
+            </tr>
+        )
+    })}
+    ```
 
