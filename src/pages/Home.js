@@ -1,5 +1,8 @@
-import React, {Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { Link, hashHistory } from 'react-router'
+
+//文件引入
+import HomeLayout from '../layouts/HomeLayout'
 
 class Home extends Component {
     constructor(props) {
@@ -9,16 +12,11 @@ class Home extends Component {
     }
     render() {
         return (
-            <div>
-                <header>
-                    <h1>this is Home </h1>
-                </header>
-                <main>
-                    <Link to="user/add">添加用户</Link>
-                    <br/>
-                    <Link to="user/list">用户列表</Link>
-                </main>
-            </div>
+            <HomeLayout title={'this is home'}>
+                <Link to="user/add">添加用户</Link>
+                <br />
+                <Link to="user/list">用户列表</Link>
+            </HomeLayout>
         )
     }
 }

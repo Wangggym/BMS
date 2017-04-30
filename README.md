@@ -72,4 +72,24 @@
         )
     })}
     ```
+2. 添加删除操作
+    - 添加函数hangleDelete传入user信息请求删除
+    ```javascript
+    ...
+    fetch('http://localhost:3000/user/'+user.id,{
+        mothed: 'delete'
+    })
+    .then(res => res.json())
+    .then(res => {
+        this.setState({
+            //filer数组过滤器 --保留true对象
+            userList: this.state.userList.filter(item => item.id !== user.id)
+        })
+        alert('删除成功！')
+    })
+    .catch(err => {
+        console.error(err)
+        alert('删除失败！')
+    })
+    ```
 

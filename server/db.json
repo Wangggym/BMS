@@ -1,12 +1,6 @@
 {
   "user": [
     {
-      "id": 10000,
-      "name": "一韬",
-      "age": 25,
-      "gender": "male"
-    },
-    {
       "id": 10001,
       "name": "张三",
       "age": 30,
@@ -17,6 +11,12 @@
       "age": 18,
       "gender": "male",
       "id": 10002
+    },
+    {
+      "name": "wang",
+      "age": 18,
+      "gender": "male",
+      "id": 10003
     }
   ],
   "book": [
