@@ -43,53 +43,110 @@
 ***
 >第三部分 
 1. 创建userList显示数据库数据
-    - 在componentWillMount或者componentDidMount时,发起数据请求。将请求来的数据放置在state中，如下：
-    ```javascript
-    ...
-    constructor(props) {
-        super(props)
-        this.state = {
-            userList: false
-        }
+- 在componentWillMount或者componentDidMount时,发起数据请求。将请求来的数据放置在state中，如下：
+```javascript
+...
+constructor(props) {
+    super(props)
+    this.state = {
+        userList: false
     }
-    componentDidMount() {
-        fetch('http://localhost:3000/user')
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    userList: res
-                })
+}
+componentDidMount() {
+    fetch('http://localhost:3000/user')
+        .then(res => res.json())
+        .then(res => {
+            this.setState({
+                userList: res
             })
-    }
-    //数据map方法生成
-    ...
-    {userList.map((user,index) => {
-        return (
-            <tr key={index}>
-                <td>{user.name}</td>
-                ...
-            </tr>
-        )
-    })}
-    ```
-2. 添加删除操作
-    - 添加函数hangleDelete传入user信息请求删除
-    ```javascript
-    ...
-    fetch('http://localhost:3000/user/'+user.id,{
-        mothed: 'delete'
-    })
-    .then(res => res.json())
-    .then(res => {
-        this.setState({
-            //filer数组过滤器 --保留true对象
-            userList: this.state.userList.filter(item => item.id !== user.id)
         })
-        alert('删除成功！')
+}
+//数据map方法生成
+...
+{userList.map((user,index) => {
+    return (
+        <tr key={index}>
+            <td>{user.name}</td>
+            ...
+        </tr>
+    )
+})}
+```
+2. 添加删除操作
+- 添加函数hangleDelete传入user信息请求删除
+```javascript
+...
+fetch('http://localhost:3000/user/'+user.id,{
+    mothed: 'delete'
+})
+.then(res => res.json())
+.then(res => {
+    this.setState({
+        //filer数组过滤器 --保留true对象
+        userList: this.state.userList.filter(item => item.id !== user.id)
     })
-    .catch(err => {
-        console.error(err)
-        alert('删除失败！')
-    })
-    ```
+    alert('删除成功！')
+})
+.catch(err => {
+    console.error(err)
+    alert('删除失败！')
+})
+```
+3. 添加编辑操作
+用户编辑和用户添加基本呢上是一样的，不同的地方有：
+- 用户编辑需要将用户的数据先填入表单
+- 用户编辑在提交表单时调用的方法和接口不同
+- 页面标题不同
+- 页面路由不同
+- 页面跳转传参 index.js路由处配置如下：
+`<Route path='user/edit/:id' component={UserEditPage} />`
+- UserList页面handleEdit函数方法如下：
+```javascript
+...
+handleEdit() {
+    this.context.router.push('user/edit/'+user.id)
+}
+...
+UserList.contextTypes = {
+    router: React.PropTypes.object.isRequired
+}
+...
+```
+- UserEdit页面接受userId参数请求相应数据：
+```javascript
+...
+componentDidMount() {
+    const userId = this.context.router.params.id
+    fetch('http://localhost:3000/user/'+userId) {...}
+}
+...
+UserEdit.contextTypes = {
+    router: React.PropTypes.object.isRequired
+}
+...
+```
+- UserEditor组件接受参数或者不接受：
+UserAdd页面 `<UserEditor />`
+UserEdit页面 `<UserEditor editTarget={user} />`
+```javascript
+//向formProvider中增加初始数据：
+...
+if(editTarget) {
+    setFormValues(editTarget)
+}
+//接口处不同的两种方法：
+handleSubmit(e) {
+    ...
+    let editType = '添加'
+    let apiUrl = 'http://localhost:3000/user'
+    let method = 'post'
+    if(editTarget) {
+        editType = '编辑'
+        apiUrl = '/'+User.id
+        method = 'put'
+    }
+    ...
+}
+```
+
 

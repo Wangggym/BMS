@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-function formProvider (fields) {
+function formProvider(fields) {
     return function (Comp) {
 
         const initialFormState = {};
@@ -15,24 +15,41 @@ function formProvider (fields) {
         }
 
         class FormComponent extends React.Component {
-            constructor (props) {
+            constructor(props) {
                 super(props);
                 this.state = {
                     form: initialFormState,
                     formValid: false
                 };
-
-                this.handleValueChange = this.handleValueChange.bind(this);
             }
-            handleValueChange (fieldName, value) {
+            setFormValues(values) {
+                if (!values) {
+                    return;
+                }
+
+                const { form } = this.state;
+                let newForm = { ...form };
+                for (const field in form) {
+                    if (form.hasOwnProperty(field)) {
+                        if (typeof values[field] !== 'undefined') {
+                            newForm[field] = { ...newForm[field], value: values[field] };
+                        }
+                        // 正常情况下主动设置的每个字段一定是有效的
+                        newForm[field].valid = true;
+                    }
+                }
+
+                this.setState({ form: newForm, formValid: true });
+            }
+            handleValueChange(fieldName, value) {
                 const { form } = this.state;
 
-                const newFieldState = {value, valid: true, error: ''};
+                const newFieldState = { value, valid: true, error: '' };
 
                 const fieldRules = fields[fieldName].rules;
 
                 for (let i = 0; i < fieldRules.length; i++) {
-                    const {pattern, error} = fieldRules[i];
+                    const { pattern, error } = fieldRules[i];
                     let valid = false;
                     if (typeof pattern === 'function') {
                         valid = pattern(value);
@@ -47,7 +64,7 @@ function formProvider (fields) {
                     }
                 }
 
-                const newForm = {...form, [fieldName]: newFieldState};
+                const newForm = { ...form, [fieldName]: newFieldState };
                 const formValid = Object.values(newForm).every(f => f.valid);
 
                 this.setState({
@@ -55,9 +72,14 @@ function formProvider (fields) {
                     formValid
                 });
             }
-            render () {
-                const {form, formValid} = this.state;
-                return <Comp {...this.props} form={form} formValid={formValid} onFormChange={this.handleValueChange}/>
+            render() {
+                const { form, formValid } = this.state;
+                return <Comp
+                    {...this.props}
+                    form={form}
+                    formValid={formValid}
+                    onFormChange={this.handleValueChange.bind(this)}
+                    setFormValues={this.setFormValues.bind(this)} />
             }
         }
 

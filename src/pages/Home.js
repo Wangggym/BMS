@@ -1,10 +1,10 @@
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 import { Link, hashHistory } from 'react-router'
 
 //文件引入
 import HomeLayout from '../layouts/HomeLayout'
 
-class Home extends Component {
+class Home extends React.Component {
     constructor(props) {
         super(props)
         this.state = {

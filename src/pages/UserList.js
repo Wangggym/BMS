@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 //文件引入
 import HomeLayout from '../layouts/HomeLayout'
@@ -40,7 +41,7 @@ export default class UserList extends React.Component {
         }
     }
     handleEdit(user) {
-
+        this.context.router.push('user/edit/' + user.id)
     }
     render() {
         return (
@@ -62,7 +63,7 @@ export default class UserList extends React.Component {
                                     <td>{user.id}</td>
                                     <td>{user.name}</td>
                                     <td>{user.age}</td>
-                                    <td>{user.gender}</td>
+                                    <td>{user.gender === 'male' ? '男' : '女'}</td>
                                     <td><a href="javascript:void(0)" onClick={() => this.handleDelete(user)}>删除</a></td>
                                     <td><a href="javascript:void(0)" onClick={() => this.handleEdit(user)}>编辑</a></td>
                                 </tr>
@@ -74,3 +75,7 @@ export default class UserList extends React.Component {
         )
     }
 }
+
+UserList.contextTypes = {
+    router: React.PropTypes.object.isRequired
+};
