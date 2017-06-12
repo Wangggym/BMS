@@ -2,16 +2,48 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FormItem from './FormItem'
 import formProvider from '../utils/formProvider'
+import AutoComplete from './AutoComplete'
+import request, { get } from '../utils/request';
 
 class BookEditor extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            recommendUsers: []
+        }
     }
     componentWillMount() {
         const { setFormValues, editTarget } = this.props
         if (editTarget) {
             setFormValues(editTarget)
+        }
+    }
+    getRecommendUsers(partialId) {
+        get('http://localhost:3000/user?id_like=' + partialUserId)
+            .then(res => {
+                if (res.length === 1 && partialId === res[0].id) {
+                    return
+                }
+                this.setState({
+                    recommendUsers: res.map(user => {
+                        return { text: `${user.id}(${user.name})`, value: user.id }
+                    })
+                })
+            })
+    }
+    timer = 0
+    handleValueChange(value) {
+        const { onFormChange } = this.props
+        onFormChange('owner_id', value)
+        this.setState({ recommendUsers: [] })
+        if (this.timer) {
+            clearTimeout(this.timer)
+        }
+        if (value) {
+            this.timer = setTimeout(() => {
+                this.getRecommendUsers(value)
+                this.timer = 0
+            }, 200)
         }
     }
     handleSumbit(e) {
@@ -29,16 +61,11 @@ class BookEditor extends React.Component {
             method = 'put'
             editType = '编辑'
         }
-        fetch(apiUrl, {
-            method,
-            body: JSON.stringify({
-                name: name.value,
-                price: price.value,
-                owner_id: owner_id.value
-            }),
-            headers: { 'Content-Type': 'application/json' }
+        request(method, apiUrl, {
+            name: name.value,
+            price: price.value,
+            owner_id: owner_id.value
         })
-            .then(res => res.json())
             .then(res => {
                 if (res.id) {
                     alert(`${editType}成功!`)
@@ -51,6 +78,7 @@ class BookEditor extends React.Component {
     }
     render() {
         const { form: { name, price, owner_id }, onFormChange } = this.props
+        const { recommendUsers } = this.state
         return (
             <form onSubmit={this.handleSumbit.bind(this)}>
                 <FormItem label='书名' valid={name.valid} error={name.error}>
@@ -60,7 +88,10 @@ class BookEditor extends React.Component {
                     <input type='text' value={price.value} onChange={e => onFormChange('price', e.target.value)} />
                 </FormItem>
                 <FormItem label='拥有者' valid={owner_id.valid} error={owner_id.error}>
-                    <input type='text' value={owner_id.value} onChange={e => onFormChange('owner_id', e.target.value)} />
+                    <AutoComplete
+                        options={recommendUsers}
+                        value={owner_id.value}
+                        onValueChange={value => this.handleValueChange(value)} />
                 </FormItem>
                 <br />
                 <input type='submit' value='提交' />
@@ -85,7 +116,7 @@ BookEditor = formProvider({
         ]
     },
     price: {
-        defaultValue: 0,
+        defaultValue: '',
         rules: [
             {
                 pattern: /^\d+$/,
@@ -100,7 +131,7 @@ BookEditor = formProvider({
         ]
     },
     owner_id: {
-        defaultValue: 0,
+        defaultValue: '',
         rules: [
             {
                 pattern: /^\d+$/,

@@ -1,8 +1,5 @@
 import React from 'react'
-import { Link, hashHistory } from 'react-router'
-
-//文件引入
-import HomeLayout from '../layouts/HomeLayout'
+import style from '../styles/home-page.less'
 
 class Home extends React.Component {
     constructor(props) {
@@ -12,15 +9,9 @@ class Home extends React.Component {
     }
     render() {
         return (
-            <HomeLayout title={'this is home'}>
-                <Link to="user/add">添加用户</Link>
-                <br />
-                <Link to="user/list">用户列表</Link>
-                <br/>
-                <Link to="book/add">添加图书</Link>
-                <br/>
-                <Link to="book/list">图书列表</Link>
-            </HomeLayout>
+            <div className={style.welcome}>
+                welcome
+            </div>
         )
     }
 }

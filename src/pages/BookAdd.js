@@ -1,6 +1,6 @@
 import React from 'react'
 import BookEditor from '../components/BookEditor'
-import HomeLayout from '../layouts/HomeLayout'
+
 export default class BookAdd extends React.Component {
     constructor(props) {
         super(props)
@@ -8,9 +8,7 @@ export default class BookAdd extends React.Component {
     }
     render() {
         return (
-            <HomeLayout title='添加图书'>
-                <BookEditor />
-            </HomeLayout>
+            <BookEditor />
         )
     }
 }

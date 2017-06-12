@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import BookEditor from '../components/BookEditor'
-import HomeLayout from '../layouts/HomeLayout'
+import { get } from '../utils/request'
+
 export default class BookEdit extends React.Component {
     constructor(props) {
         super(props)
@@ -11,8 +12,7 @@ export default class BookEdit extends React.Component {
     }
     componentWillMount() {
         const bookId = this.context.router.params.id
-        fetch('http://localhost:3000/book/' + bookId)
-            .then(res => res.json())
+        get('http://localhost:3000/book/' + bookId)
             .then(res => {
                 this.setState({
                     book: res
@@ -22,14 +22,14 @@ export default class BookEdit extends React.Component {
     render() {
         const { book } = this.state
         return (
-            <HomeLayout title='编辑图书'>
+            <div>
                 {book ? <BookEditor editTarget={book} /> : '加载中...'}
-            </HomeLayout>
+            </div>
         )
     }
 }
 
-BookEdit.contextTypes ={
+BookEdit.contextTypes = {
     router: React.PropTypes.object.isRequired
 }
 
